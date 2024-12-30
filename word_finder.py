@@ -1,6 +1,7 @@
 import random
 import csv
 import sys
+
 csv.field_size_limit(sys.maxsize)
 words_set = set()
 with open('dictionary.csv', 'r') as file:
@@ -9,23 +10,34 @@ with open('dictionary.csv', 'r') as file:
         words_set.add(row[0].lower())
 
 class Board:
-    cube_list = [] # contains dim^2 objects (type Cube)
-    
-    def __init__(self, cubes_used=cube_list, dim=4):
+    def __init__(self, dim=4, csv_file="standard_board.csv"):
         '''
         A Boggle board.
 
         Class variables:
-        - cube_configuration: properly shuffled cubes from cube_list
+        - cubes_used: cubes to be used in game, loads default cube set
+        - cube_configuration: properly shuffled cubes from cubes_used
         - dim: dimension of board
         '''
-        self.cubes_used = cubes_used
-        self.cube_configuration = [[] for _ in range(dim)]
-        self.dim = dim
+        self.cubes_used = []
+        with open(csv_file, 'r') as file:
+            csv_reader = csv.reader(file)
+            for row in csv_reader:
+                letter_list = []
+                for letter in row:
+                    letter_list.append(letter)
+                self.cubes_used.append(Cube(letter_list))
 
-#    def __repr__(self):
- #       for row in self.dim:
-  #          print(row)
+        self.dim = dim
+        self.cube_configuration = [[] for _ in range(dim)]
+
+    def __str__(self):
+        print_string = ""
+        for row in self.cube_configuration:
+            for elem in row:
+                print_string += elem.displayed_letter + " "
+            print_string += "\n"
+        return print_string
 
     def populate(self):
         '''
@@ -39,14 +51,21 @@ class Board:
                 for _ in range(self.dim):
                     cube = temp_list.pop(random.randint(0, len(temp_list) - 1))
                     self.cube_configuration[i].append(cube)
+                    cube.roll()
         
         # add neighbors to each cube
-        for row in self.dim:
-            for col in self.dim:
+        for row in range(self.dim):
+            for col in range(self.dim):
                 for i in range(-1, 2):
                     for j in range(-1, 2):
-                        if (row + i > 0) and (row + i < self.dim) and (col + j > 0) and (col + j < self.dim):
-                            self.cube_configuration[row][col].neighbors.append(self.cube_configuration[row + i][col + i])
+                        if (row + i >= 0) and (row + i < self.dim) and (col + j >= 0) and (col + j < self.dim):
+                            if self.cube_configuration[row][col].neighbors is None:
+                                self.cube_configuration[row][col].neighbors = []
+                            elif i == 0 and j == 0:
+                                # idk man I need to figure out how to skip this case  
+                                pass
+                            else:
+                                self.cube_configuration[row][col].neighbors.append(self.cube_configuration[row + i][col + j])
 
     # get a list of paths with length in range(min,max)
     def get_paths(self, min, max):
@@ -85,7 +104,7 @@ class Cube:
 
     def roll(self):
         self.displayed_letter = self.letter_list[random.randint(0, len(self.letter_list)-1)] # usually 6, but edited for testing so i don't have to add 6 faces
-    
+
     def display_letter(self, letter):
         assert letter in self.letter_list
         self.displayed_letter = letter
@@ -124,29 +143,3 @@ def list_to_str(input_list):
     for cube in input_list:
         result += cube.displayed_letter
     return result
-            
-#test 3x3 board
-a=Cube(['a'])
-s=Cube(['s'])
-e=Cube(['e'])
-t=Cube(['t'])
-r=Cube(['r'])
-o=Cube(['o'])
-w=Cube(['w'])
-n=Cube(['n'])
-m=Cube(['m'])
-board = Board([a,s,e,t,r,o,w,n,m])
-for cube in board.cubes_used:
-    cube.roll()
-for i in [s, t, r]:
-    a.add_neighbor(i)
-for i in [a, e, o, r, t]:
-    s.add_neighbor(i)
-for i in [a, s, r, w, n]:
-    t.add_neighbor(i)
-for i in [s, e, r, n, m]:
-    o.add_neighbor(i)
-for i in [a, s, e, t, o, w, n, m]:
-    r.add_neighbor(i)
-for i in [w, t, r, m, o]:
-    n.add_neighbor(i)
