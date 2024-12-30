@@ -38,7 +38,7 @@ class Game:
                 if word not in possible_words:
                     self.player_list[i].word_list.remove(word) # word is an invalid word
                     invalid_words.append(word)
-                elif word in possible_words:
+                else:
                     possible_words.remove(word)
 
             # # compare words to other players' lists

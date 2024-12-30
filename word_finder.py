@@ -58,16 +58,18 @@ class Board:
         # add neighbors to each cube
         for row in range(self.dim):
             for col in range(self.dim):
+                if self.cube_configuration[row][col].neighbors is None:
+                    self.cube_configuration[row][col].neighbors = []
                 for i in range(-1, 2):
                     for j in range(-1, 2):
-                        if (row + i >= 0) and (row + i < self.dim) and (col + j >= 0) and (col + j < self.dim):
-                            if self.cube_configuration[row][col].neighbors is None:
-                                self.cube_configuration[row][col].neighbors = []
-                            elif i == 0 and j == 0:
+                        row_i = row + i
+                        col_j = col + j
+                        if row_i >= 0 and row_i < self.dim and col_j >= 0 and col_j < self.dim:
+                            if i == 0 and j == 0:
                                 # idk man I need to figure out how to skip this case  
                                 pass
                             else:
-                                self.cube_configuration[row][col].neighbors.append(self.cube_configuration[row + i][col + j])
+                                self.cube_configuration[row][col].neighbors.append(self.cube_configuration[row_i][col_j])
 
     # get a list of paths with length in range(min,max)
     def get_paths(self, min, max):
@@ -76,14 +78,14 @@ class Board:
             result.extend(cube.find_paths())
         return list(filter(lambda x: len(x) >= min and len(x) < max, result))
 
-     # get all paths of length at least 4 and then turn them into strings (i am aware that i could do this nicer with the get_paths function with minimum 4 but i haven't fixed it yet)
+     # get all paths of length at least 3 and then turn them into strings (i am aware that i could do this nicer with the get_paths function with minimum 4 but i haven't fixed it yet)
     def get_words(self):
         result = []
         for cube in self.cubes_used:
             for path in cube.find_paths():
-                if len(path) >= 4:
-                    str_path = list_to_str(path)
-                    if str_path.lower() in words_set:
+                if len(path) >= 3:
+                    str_path = list_to_str(path).lower()
+                    if str_path in words_set:
                         result.append(str_path)
         return result
 
@@ -141,7 +143,7 @@ class Cube:
 
 
 def list_to_str(input_list):
-    result = ''
+    result = ""
     for cube in input_list:
         result += cube.displayed_letter
     return result
