@@ -1,4 +1,12 @@
 import random
+import csv
+import sys
+csv.field_size_limit(sys.maxsize)
+words_set = set()
+with open('english Dictionary.csv', 'r') as file:
+    reader = csv.reader(file)
+    for row in reader:
+        words_set.add(row[0].lower())
 
 class Board:
     cube_list = [] # contains dim^2 objects (type Cube)
@@ -54,7 +62,8 @@ class Board:
             for path in cube.find_paths():
                 if len(path) >= 4:
                     str_path = list_to_str(path)
-                    result.append(str_path)
+                    if str_path.lower() in words_set:
+                        result.append(str_path)
         return result
 
 class Cube:
