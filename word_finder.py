@@ -11,11 +11,11 @@ class Board:
         - cube_configuration: properly shuffled cubes from cube_list
         - dim: dimension of board
         '''
-        self.cube_configuration = [[] for _ in range(dim)]
+        self.cube_configuration = [[] for _ in range(self.dim)]
         self.dim = dim
 
     def __repr__(self):
-        for row in dim:
+        for row in self.dim:
             print(row)
 
     def populate(self):
@@ -25,18 +25,18 @@ class Board:
         # shuffle cubes in board
         temp_list = list(cube_list)
         while temp_list:
-            for i in range(dim):
-                for _ in range(dim):
+            for i in range(self.dim):
+                for _ in range(self.dim):
                     cube = temp_list.pop(random.randint(0, len(temp_list) - 1))
-                    cube_configuration[i].append(cube)
+                    self.cube_configuration[i].append(cube)
         
         # add neighbors to each cube
-        for row in dim:
-            for col in dim:
+        for row in self.dim:
+            for col in self.dim:
                 for i in range(-1, 2):
                     for j in range(-1, 2):
-                        if (row + i > 0) and (row + i < dim) and (col + j > 0) and (col + j < dim):
-                            cube_configuration[row][col].neighbors.append(cube_configuration[row + i][col + i])
+                        if (row + i > 0) and (row + i < self.dim) and (col + j > 0) and (col + j < self.dim):
+                            self.cube_configuration[row][col].neighbors.append(self.cube_configuration[row + i][col + i])
 
 class Cube:
     '''
@@ -56,7 +56,7 @@ class Cube:
         return self.displayed_letter
 
     def roll(self):
-        self.displayed_letter = letter_list[random.randint(0, 5)]
+        self.displayed_letter = self.letter_list[random.randint(0, 5)]
 
 
 def list_to_str(input_list):
