@@ -3,7 +3,7 @@ import csv
 import sys
 csv.field_size_limit(sys.maxsize)
 words_set = set()
-with open('english Dictionary.csv', 'r') as file:
+with open('dictionary.csv', 'r') as file:
     reader = csv.reader(file)
     for row in reader:
         words_set.add(row[0].lower())
