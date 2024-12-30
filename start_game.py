@@ -2,6 +2,7 @@ from word_finder import *
 from game import *
 
 board = Board()
+# board = Board(dim=5, csv_file="big_board.csv")
 board.populate()
 
 player_list = []

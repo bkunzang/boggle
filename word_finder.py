@@ -58,8 +58,6 @@ class Board:
         # add neighbors to each cube
         for row in range(self.dim):
             for col in range(self.dim):
-                if self.cube_configuration[row][col].neighbors is None:
-                    self.cube_configuration[row][col].neighbors = []
                 for i in range(-1, 2):
                     for j in range(-1, 2):
                         row_i = row + i
@@ -69,7 +67,7 @@ class Board:
                                 # idk man I need to figure out how to skip this case  
                                 pass
                             else:
-                                self.cube_configuration[row][col].neighbors.append(self.cube_configuration[row_i][col_j])
+                                self.cube_configuration[row][col].add_neighbor(self.cube_configuration[row_i][col_j])
 
     # get a list of paths with length in range(min,max)
     def get_paths(self, min, max):
