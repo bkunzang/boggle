@@ -11,10 +11,13 @@ with open('dictionary.csv', 'r') as file:
 
 class Board:
     def __init__(self, dim=4, csv_file="standard_board.csv"):
+    def __init__(self, dim=4, csv_file="standard_board.csv"):
         '''
         A Boggle board.
 
         Class variables:
+        - cubes_used: cubes to be used in game, loads default cube set
+        - cube_configuration: properly shuffled cubes from cubes_used
         - cubes_used: cubes to be used in game, loads default cube set
         - cube_configuration: properly shuffled cubes from cubes_used
         - dim: dimension of board
