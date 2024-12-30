@@ -11,7 +11,6 @@ with open('dictionary.csv', 'r') as file:
 
 class Board:
     def __init__(self, dim=4, csv_file="standard_board.csv"):
-    def __init__(self, dim=4, csv_file="standard_board.csv"):
         '''
         A Boggle board.
 
