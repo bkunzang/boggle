@@ -1,17 +1,25 @@
 import random
+import csv
 
 class Board:
-    cube_list = [] # contains dim^2 objects (type Cube)
-    
-    def __init__(self, cubes_used=cube_list, dim=4):
+    def __init__(self, dim=4, csv_file="standard_board.csv"):
         '''
         A Boggle board.
 
         Class variables:
-        - cube_configuration: properly shuffled cubes from cube_list
+        - cubes_used: cubes to be used in game, loads default cube set
+        - cube_configuration: properly shuffled cubes from cubes_used
         - dim: dimension of board
         '''
-        self.cubes_used = cubes_used
+        self.cubes_used = []
+        with open(csv_file, 'r') as file:
+            csv_reader = csv.reader(file)
+            for row in csv_reader:
+                letter_list = []
+                for letter in row:
+                    letter_list.append(letter)
+                self.cubes_used.append(Cube(letter_list))
+
         self.cube_configuration = [[] for _ in range(dim)]
         self.dim = dim
 
