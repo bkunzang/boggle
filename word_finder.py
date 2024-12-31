@@ -27,11 +27,11 @@ class Board:
 
         dictionary_file_name = language + "_dictionary.csv"
         csv.field_size_limit(sys.maxsize)
-        words_set = set()
+        self.words_set = set()
         with open(dictionary_file_name, 'r') as file:
             reader = csv.reader(file)
             for row in reader:
-                words_set.add(row[0].lower())
+                self.words_set.add(row[0].lower())
         
 
         self.dim = dim
@@ -72,7 +72,7 @@ class Board:
                                 pass
                             else:
                                 self.cube_configuration[row][col].add_neighbor(self.cube_configuration[row_i][col_j])
-
+        self.all_words = self.get_words()
     # get a list of paths with length in range(min,max)
     def get_paths(self, min, max):
         result = []
@@ -87,7 +87,7 @@ class Board:
             for path in cube.find_paths():
                 if len(path) >= 3:
                     str_path = list_to_str(path).lower()
-                    if str_path in words_set:
+                    if str_path in self.words_set:
                         result.append(str_path)
         return result
 
