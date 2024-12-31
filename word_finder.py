@@ -81,15 +81,20 @@ class Board:
                             else:
                                 self.cube_configuration[row][col].add_neighbor(self.cube_configuration[row_i][col_j])
         self.all_words = self.get_words()
-    # get a list of paths with length in range(min,max)
+
     def get_paths(self, min, max):
+        '''
+        Get a list of paths with length in range(min,max). Note: this method uses the obsolete find_paths() function.
+        '''
         result = []
         for cube in self.cubes_used:
             result.extend(cube.find_paths())
         return list(filter(lambda x: len(x) >= min and len(x) < max, result))
 
-     # get all paths of length at least 3 and then turn them into strings (i am aware that i could do this nicer with the get_paths function with minimum 4 but i haven't fixed it yet)
     def old_get_words(self):
+        '''
+        Old and slow version of Board.get_words().
+        '''
         result = []
         for cube in self.cubes_used:
             for path in cube.find_paths():
@@ -99,7 +104,11 @@ class Board:
                         result.append(str_path)
         return result
     
+    # 
     def get_words(self):
+        '''
+        Returns a list of all of the valid words (at least 3 letters long and in the dictionary) in the board.
+        '''
         result = []
         for cube in self.cubes_used:
             for word in cube.find_words():
@@ -114,7 +123,8 @@ class Cube:
         Class variables:
         - letter_list: provided list of letters, specific to each cube
         - displayed_letter: letter that will display on board after rolling
-        - neighbors: Cube objects next to self
+        - neighbors: Cube objects next to self. Note it is very important that before a Cube's 
+        neighbors are added its neighbors attribute is None, and not the empty list due to Python list mutation.
         '''
     def __init__(self, letter_list, board, neighbors=None):
         self.letter_list = letter_list
@@ -126,14 +136,23 @@ class Cube:
         return self.displayed_letter
 
     def roll(self):
+        '''
+        Rolls the Cube by randomly selecting one of its faces to display.
+        '''
         self.displayed_letter = self.letter_list[random.randint(0, len(self.letter_list)-1)] # usually 6, but edited for testing so i don't have to add 6 faces
 
     def display_letter(self, letter):
+        '''
+        Sets the displayed letter of a Cube to a particular one of its faces.
+        '''
         assert letter in self.letter_list
         self.displayed_letter = letter
 
-    # adds new vertex to the neighbor sets of both at once (undirected graph)
+    # 
     def add_neighbor(self, new):
+        '''
+        Adds new (a Cube instance) to the list self.neighbors and also adds self to new.neighbors. Instantiates neighbor lists if necessary.
+        '''
         if self.neighbors is None:
             self.neighbors = []
         if new.neighbors is None:
