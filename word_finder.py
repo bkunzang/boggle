@@ -97,7 +97,7 @@ class Board:
         result = []
         for cube in self.cubes_used:
             for word in cube.find_words():
-                if len(word) >= 3:
+                if len(word) >= 3 and word not in result:
                     result.append(word)
         return result
 

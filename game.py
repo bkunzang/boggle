@@ -27,7 +27,7 @@ class Game:
         # check each player's word list
         # lots of commented stuff because some of it is multi-player functionality related things
         removed_words = []
-        possible_words = self.board.all_words
+        possible_words = self.board.all_words[:]
 
         for i in range(len(self.player_list)):
             invalid_words = []
