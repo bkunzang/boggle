@@ -23,15 +23,17 @@ class Board:
                 letter_list = []
                 for letter in row:
                     letter_list.append(letter)
-                self.cubes_used.append(Cube(letter_list))
+                self.cubes_used.append(Cube(letter_list, self))
 
         dictionary_file_name = language + "_dictionary.csv"
         csv.field_size_limit(sys.maxsize)
         self.words_set = set()
+        self.two_prefixes_set = set()
         with open(dictionary_file_name, 'r') as file:
             reader = csv.reader(file)
             for row in reader:
                 self.words_set.add(row[0].lower())
+                self.two_prefixes_set.add((row[0].lower())[:2])
         
 
         self.dim = dim
@@ -81,7 +83,7 @@ class Board:
         return list(filter(lambda x: len(x) >= min and len(x) < max, result))
 
      # get all paths of length at least 3 and then turn them into strings (i am aware that i could do this nicer with the get_paths function with minimum 4 but i haven't fixed it yet)
-    def get_words(self):
+    def old_get_words(self):
         result = []
         for cube in self.cubes_used:
             for path in cube.find_paths():
@@ -89,6 +91,14 @@ class Board:
                     str_path = list_to_str(path).lower()
                     if str_path in self.words_set:
                         result.append(str_path)
+        return result
+    
+    def get_words(self):
+        result = []
+        for cube in self.cubes_used:
+            for word in cube.find_words():
+                if len(word) >= 3:
+                    result.append(word)
         return result
 
 class Cube:
@@ -100,8 +110,9 @@ class Cube:
         - displayed_letter: letter that will display on board after rolling
         - neighbors: Cube objects next to self
         '''
-    def __init__(self, letter_list, neighbors=None):
+    def __init__(self, letter_list, board, neighbors=None):
         self.letter_list = letter_list
+        self.board = board
         self.displayed_letter = None
         self.neighbors = neighbors
 
@@ -142,7 +153,27 @@ class Cube:
                     result.extend(newpaths)
         current_path.pop()
         return result
+    
+    def find_words(self):
+        return self.words_helper([self])
 
+    def words_helper(self, current_path):
+        current_str = list_to_str(current_path).lower()
+        result = []
+        if current_str in self.board.words_set:
+            result.append(current_str)
+        if self.neighbors is None:
+            return result
+        elif len(current_str) == 2 and current_str not in self.board.two_prefixes_set:
+            pass
+        else:
+            for neighbor in self.neighbors:
+                if neighbor not in current_path:
+                    current_path.append(neighbor)
+                    newpaths = neighbor.words_helper(current_path)
+                    result.extend(newpaths)
+        current_path.pop()
+        return result
 
 def list_to_str(input_list):
     result = ""
