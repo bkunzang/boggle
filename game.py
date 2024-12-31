@@ -11,7 +11,7 @@ class Game:
         x = input("Press enter to begin.")
         print(self.board)
 
-        # some psuedocode while I wait to implement the 5 minute timer function
+        # some pseudocode while I wait to implement the 5 minute timer function
         # not sure if I'll use another language to implement GUI where I can do that through the GUI
         # or use tkinter
         # but for now, limits number of words you can enter to 10
@@ -51,9 +51,10 @@ class Game:
 
             self.player_list[i].calculate_points()
             print(f"You scored {self.player_list[i].point_total} points!")
-            print("The following words you entered were invalid: ", end="")
-            for word in invalid_words:
-                print(word, end=", ")
+            
+            if invalid_words:
+                print("The following words you entered were invalid: ", ", ".join(invalid_words))
+
             print("\n Here are all possible words you missed:")
             print(possible_words)
 

@@ -2,33 +2,37 @@ import random
 import csv
 import sys
 
-csv.field_size_limit(sys.maxsize)
-words_set = set()
-with open('dictionary.csv', 'r') as file:
-    reader = csv.reader(file)
-    for row in reader:
-        words_set.add(row[0].lower())
-
 class Board:
-    def __init__(self, dim=4, csv_file="standard_board.csv"):
+    def __init__(self, dim=4, language="English"):
         '''
         A Boggle board.
 
         Class variables:
         - cubes_used: cubes to be used in game, loads default cube set
         - cube_configuration: properly shuffled cubes from cubes_used
-        - cubes_used: cubes to be used in game, loads default cube set
-        - cube_configuration: properly shuffled cubes from cubes_used
-        - dim: dimension of board
+        - words_set: dictionary of all words in provided language
+        - dim: dimension of board, defaults to 4x4
+        - language: language of play, defaults to English
         '''
         self.cubes_used = []
-        with open(csv_file, 'r') as file:
+
+        csv_file_name = language + "_standard_board.csv"
+        with open(csv_file_name, 'r') as file:
             csv_reader = csv.reader(file)
             for row in csv_reader:
                 letter_list = []
                 for letter in row:
                     letter_list.append(letter)
                 self.cubes_used.append(Cube(letter_list))
+
+        dictionary_file_name = language + "_dictionary.csv"
+        csv.field_size_limit(sys.maxsize)
+        words_set = set()
+        with open(dictionary_file_name, 'r') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                words_set.add(row[0].lower())
+        
 
         self.dim = dim
         self.cube_configuration = [[] for _ in range(dim)]
