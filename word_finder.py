@@ -28,12 +28,18 @@ class Board:
         dictionary_file_name = language + "_dictionary.csv"
         csv.field_size_limit(sys.maxsize)
         self.words_set = set()
-        self.two_prefixes_set = set()
+        #self.two_prefixes_set = set()
+        #self.three_prefixes_set = set()
+        self.prefixes_set_list = [set() for _ in range(14)]
         with open(dictionary_file_name, 'r') as file:
             reader = csv.reader(file)
             for row in reader:
                 self.words_set.add(row[0].lower())
-                self.two_prefixes_set.add((row[0].lower())[:2])
+                for i in range(14):
+                    if len(row[0]) >= i+2:
+                        self.prefixes_set_list[i].add((row[0].lower())[:(i+2)])
+                #self.two_prefixes_set.add((row[0].lower())[:2])
+                #self.three_prefixes_set.add((row[0].lower())[:3])
         
 
         self.dim = dim
@@ -164,8 +170,10 @@ class Cube:
             result.append(current_str)
         if self.neighbors is None:
             return result
-        elif len(current_str) == 2 and current_str not in self.board.two_prefixes_set:
+        if len(current_str) >= 2 and current_str not in self.board.prefixes_set_list[len(current_str)-2]:
             pass
+       # elif (len(current_str) == 2 and current_str not in self.board.two_prefixes_set) or (len(current_str)==3 and current_str not in self.board.three_prefixes_set):
+        #    pass
         else:
             for neighbor in self.neighbors:
                 if neighbor not in current_path:

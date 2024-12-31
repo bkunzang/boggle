@@ -5,9 +5,9 @@ setup = board = Board()
 board.populate()
 
 t0 = process_time()
-board.get_words()
+board.old_get_words()
 t1 = process_time()
-board.new_get_words()
+board.get_words()
 t2 = process_time()
 
 x = t1 - t0
