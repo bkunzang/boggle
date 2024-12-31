@@ -81,6 +81,7 @@ class Board:
                             else:
                                 self.cube_configuration[row][col].add_neighbor(self.cube_configuration[row_i][col_j])
         self.all_words = self.get_words()
+        self.total_points = self.get_points()
 
     def get_paths(self, min, max):
         '''
@@ -115,6 +116,17 @@ class Board:
                 if len(word) >= 3 and word not in result:
                     result.append(word)
         return result
+    
+    def get_points(self):
+        acc = 0
+        for word in self.all_words:
+            if len(word) == 3: acc += 1
+            elif len(word) == 4: acc += 1
+            elif len(word) == 5: acc += 2
+            elif len(word) == 6: acc += 3
+            elif len(word) == 7: acc += 5
+            elif len(word) >= 8: acc += 11
+        return acc
 
 class Cube:
     '''
@@ -162,10 +174,15 @@ class Cube:
             new.neighbors.append(self)
     
     def find_paths(self):
+        '''
+        Outdated way to find paths beginning with self.
+        '''
         return self.paths_helper([self])
     
-    # go down and add letters to path until you can't anymore, then get rid of the last ones until you can again
     def paths_helper(self, current_path):
+        '''
+        Outdated helper function to find paths.
+        '''
         result = []
         result.append(current_path[:])
         if self.neighbors is None:
@@ -180,9 +197,16 @@ class Cube:
         return result
     
     def find_words(self):
+        '''
+        Finds all valid words beginning with self.
+        '''
         return self.words_helper([self])
 
     def words_helper(self, current_path):
+        '''
+        - Variant of DFS, where the Cubes are like graph vertices. 
+        - Checks at each step if there are any valid words beginning with the current path (reduces 4x4 solve time from about 17 secs to about 0.0015 secs)
+        '''
         current_str = list_to_str(current_path).lower()
         result = []
         if current_str in self.board.words_set:
@@ -191,8 +215,6 @@ class Cube:
             return result
         if len(current_str) >= 2 and current_str not in self.board.prefixes_set_list[len(current_str)-2]:
             pass
-       # elif (len(current_str) == 2 and current_str not in self.board.two_prefixes_set) or (len(current_str)==3 and current_str not in self.board.three_prefixes_set):
-        #    pass
         else:
             for neighbor in self.neighbors:
                 if neighbor not in current_path:
@@ -203,6 +225,9 @@ class Cube:
         return result
 
 def list_to_str(input_list):
+    '''
+    Converts a list of Cubes a string of the displayed letters.
+    '''
     result = ""
     for cube in input_list:
         result += cube.displayed_letter
