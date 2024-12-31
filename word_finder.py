@@ -50,7 +50,6 @@ class Board:
         Add description here.
         '''
         # shuffle cubes in board
-        map(lambda x: x.roll(), self.cubes_used)
         temp_list = list(self.cubes_used)
         while temp_list:
             for i in range(self.dim):
@@ -67,21 +66,25 @@ class Board:
                         row_i = row + i
                         col_j = col + j
                         if row_i >= 0 and row_i < self.dim and col_j >= 0 and col_j < self.dim:
-                            if i == 0 and j == 0:
-                                # idk man I need to figure out how to skip this case  
-                                pass
-                            else:
+                            if i != 0 or j != 0:
                                 self.cube_configuration[row][col].add_neighbor(self.cube_configuration[row_i][col_j])
         self.all_words = self.get_words()
+
     # get a list of paths with length in range(min,max)
     def get_paths(self, min, max):
+        '''
+        Add description here.
+        '''
         result = []
         for cube in self.cubes_used:
             result.extend(cube.find_paths())
         return list(filter(lambda x: len(x) >= min and len(x) < max, result))
 
-     # get all paths of length at least 3 and then turn them into strings (i am aware that i could do this nicer with the get_paths function with minimum 4 but i haven't fixed it yet)
+    # get all paths of length at least 3 and then turn them into strings (i am aware that i could do this nicer with the get_paths function with minimum 4 but i haven't fixed it yet)
     def get_words(self):
+        '''
+        Add description here.
+        '''
         result = []
         for cube in self.cubes_used:
             for path in cube.find_paths():
@@ -109,6 +112,9 @@ class Cube:
         return self.displayed_letter
 
     def roll(self):
+        '''
+        Sets the displayed letter to a random letter from the letter list.
+        '''
         self.displayed_letter = self.letter_list[random.randint(0, len(self.letter_list)-1)] # usually 6, but edited for testing so i don't have to add 6 faces
 
     def display_letter(self, letter):
@@ -117,6 +123,9 @@ class Cube:
 
     # adds new vertex to the neighbor sets of both at once (undirected graph)
     def add_neighbor(self, new):
+        '''
+        Add description here.
+        '''
         if self.neighbors is None:
             self.neighbors = []
         if new.neighbors is None:
@@ -126,10 +135,16 @@ class Cube:
             new.neighbors.append(self)
     
     def find_paths(self):
+        '''
+        Add description here.
+        '''
         return self.paths_helper([self])
     
     # go down and add letters to path until you can't anymore, then get rid of the last ones until you can again
     def paths_helper(self, current_path):
+        '''
+        Add description here.
+        '''
         result = []
         result.append(current_path[:])
         if self.neighbors is None:
@@ -145,6 +160,9 @@ class Cube:
 
 
 def list_to_str(input_list):
+    '''
+    Add description here.
+    '''
     result = ""
     for cube in input_list:
         result += cube.displayed_letter

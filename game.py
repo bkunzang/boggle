@@ -7,6 +7,9 @@ class Game:
         self.board = board
 
     def run_game(self, player):
+        '''
+        Add description here.
+        '''
         print("Welcome to Boggle! You will have 5 minutes to list as many words as you can.")
         x = input("Press enter to begin.")
         print(self.board)
@@ -27,7 +30,7 @@ class Game:
         # check each player's word list
         # lots of commented stuff because some of it is multi-player functionality related things
         removed_words = []
-        possible_words = self.board.all_words
+        possible_words = self.board.words_set
 
         for i in range(len(self.player_list)):
             invalid_words = []
@@ -51,9 +54,8 @@ class Game:
 
             self.player_list[i].calculate_points()
             print(f"You scored {self.player_list[i].point_total} points!")
-            
             if invalid_words:
-                print("The following words you entered were invalid: ", ", ".join(invalid_words))
+                print("The following words you entered were invalid:", ", ".join(invalid_words))
 
             print("\n Here are all possible words you missed:")
             print(possible_words)
@@ -70,6 +72,9 @@ class Player:
         self.level = level
 
     def calculate_points(self):
+        '''
+        Calculates total points from filtered word list.
+        '''
         for word in self.word_list:
             if len(word) == 3:
                 if self.level == "Easy":
