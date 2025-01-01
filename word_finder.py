@@ -58,6 +58,7 @@ class Board:
         Add description here.
         '''
         # shuffle cubes in board
+        self.cube_configuration = [[] for _ in range(self.dim)]
         map(lambda x: x.roll(), self.cubes_used)
         temp_list = list(self.cubes_used)
         while temp_list:
@@ -65,6 +66,7 @@ class Board:
                 for _ in range(self.dim):
                     cube = temp_list.pop(random.randint(0, len(temp_list) - 1))
                     self.cube_configuration[i].append(cube)
+                    cube.clear_neighbors()
                     cube.roll()
         
         # add neighbors to each cube
@@ -172,6 +174,9 @@ class Cube:
         if new not in self.neighbors and self not in new.neighbors:
             self.neighbors.append(new)
             new.neighbors.append(self)
+    
+    def clear_neighbors(self):
+        self.neighbors = None
     
     def find_paths(self):
         '''
