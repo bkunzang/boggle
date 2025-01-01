@@ -10,27 +10,18 @@ def get_test_board():
     return test_board
 
 test_board = get_test_board()
-test_words = ['gnu', 'gnus', 'gnat', 'gnats', 'gan', 'gat', 'gats', 
-            'aunt', 'aunts', 'anus', 'ant', 'ants', 'anta', 'ana', 
-            'anatto', 'anattos', 'anga', 'aqua', 'aah', 'anus', 
-            'ana', 'ant', 'ants', 'att', 'aqua', 'oms', 'our', 
-            'oust', 'oust', 'out', 'outs', 'mol', 'mols', 'mount', 
-            'mounts', 'mouth', 'mouths', 'mos', 'most', 'most', 
-            'mot', 'mots', 'mott', 'motts', 'moth', 'moths', 'rhus',
-            'rust', 'rust', 'rush', 'ruana', 'run', 'runs', 'runt', 
-            'runts', 'rung', 'rut', 'ruts', 'ruth', 'ruths', 'uns', 
-            'uts', 'uta', 'nurl', 'nurls', 'nus', 'nut', 'nuts', 
-            'nah', 'nth', 'nag', 'hurl', 'hurls', 'hush', 'hun', 
-            'huns', 'hunt', 'hunts', 'hung', 'hut', 'huts', 'haul', 
-            'hauls', 'haunt', 'haunts', 'haut', 'hansom', 'hant', 'hants', 
-            'hang', 'tush', 'tun', 'tuns', 'tuna', 'tuna', 'tung', 'tan', 
-            'tans', 'tang', 'tag', 'tolu', 'tolus', 'tom', 'toms', 'tour', 
-            'tout', 'touts', 'tost', 'tosh', 'lour', 'lout', 'louts', 'lost', 
-            'lost', 'lot', 'lots', 'loth', 'lust', 'lust', 'lush', 'luna', 'lunt', 
-            'lunts', 'luna', 'lung', 'slot', 'sloth', 'slur', 'slung', 'slut', 'sol',
-            'sou', 'sour', 'soul', 'south', 'sot', 'soth', 'sun', 'sung', 
-            'stour', 'stout', 'snath', 'snag', 'stun', 'stung', 'stang', 
-            'stag', 'quant', 'quants', 'quanta', 'quant', 'quants', 'quag']
+test_words = ['gnu', 'gnus', 'gnat', 'gnats', 'gan', 'gat', 'gats', 'aunt', 'aunts', 'anus', 'ant',
+            'ants', 'anta', 'ana', 'anatto', 'anattos', 'anga', 'aqua', 'aah', 'att', 'oms', 'our', 
+            'oust', 'out', 'outs', 'mol', 'mols', 'mount', 'mounts', 'mouth', 'mouths', 'mos', 'most', 
+            'mot', 'mots', 'mott', 'motts', 'moth', 'moths', 'rhus', 'rust', 'rush', 'ruana', 'run', 'runs', 
+            'runt', 'runts', 'rung', 'rut', 'ruts', 'ruth', 'ruths', 'uns', 'uts', 'uta', 'nurl', 'nurls', 
+            'nus', 'nut', 'nuts', 'nah', 'nth', 'nag', 'hurl', 'hurls', 'hush', 'hun', 'huns', 'hunt', 'hunts', 
+            'hung', 'hut', 'huts', 'haul', 'hauls', 'haunt', 'haunts', 'haut', 'hansom', 'hant', 'hants', 
+            'hang', 'tush', 'tun', 'tuns', 'tuna', 'tung', 'tan', 'tans', 'tang', 'tag', 'tolu', 'tolus', 
+            'tom', 'toms', 'tour', 'tout', 'touts', 'tost', 'tosh', 'lour', 'lout', 'louts', 'lost', 'lot', 
+            'lots', 'loth', 'lust', 'lush', 'luna', 'lunt', 'lunts', 'lung', 'slot', 'sloth', 'slur', 'slung',
+            'slut', 'sol', 'sou', 'sour', 'soul', 'south', 'sot', 'soth', 'sun', 'sung', 'stour', 'stout', 
+            'snath', 'snag', 'stun', 'stung', 'stang', 'stag', 'qua', 'quant', 'quants', 'quanta', 'quag']
 
 def test_all_words():
     assert test_board.all_words == test_words
