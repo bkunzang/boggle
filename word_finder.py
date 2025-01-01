@@ -16,7 +16,7 @@ class Board:
         '''
         self.cubes_used = []
 
-        csv_file_name = language + "_standard_board.csv"
+        csv_file_name = language + "_" + str(dim) + "_standard_board.csv"
         with open(csv_file_name, 'r') as file:
             csv_reader = csv.reader(file)
             for row in csv_reader:
@@ -30,12 +30,12 @@ class Board:
         self.words_set = set()
         #self.two_prefixes_set = set()
         #self.three_prefixes_set = set()
-        self.prefixes_set_list = [set() for _ in range(14)]
+        self.prefixes_set_list = [set() for _ in range(dim*dim - 2)]
         with open(dictionary_file_name, 'r') as file:
             reader = csv.reader(file)
             for row in reader:
                 self.words_set.add(row[0].lower())
-                for i in range(14):
+                for i in range(dim*dim - 2):
                     if len(row[0]) >= i+2:
                         self.prefixes_set_list[i].add((row[0].lower())[:(i+2)])
                 #self.two_prefixes_set.add((row[0].lower())[:2])
@@ -44,6 +44,10 @@ class Board:
 
         self.dim = dim
         self.cube_configuration = [[] for _ in range(dim)]
+
+        self.min_word_length = 3
+        if dim > 4:
+            self.min_word_length = 4
 
     def __str__(self):
         print_string = ""
@@ -84,6 +88,7 @@ class Board:
                                 self.cube_configuration[row][col].add_neighbor(self.cube_configuration[row_i][col_j])
         self.all_words = self.get_words()
         self.total_points = self.get_points()
+        self.num_words = len(self.all_words)
 
     def get_paths(self, min, max):
         '''
@@ -115,7 +120,7 @@ class Board:
         result = []
         for cube in self.cubes_used:
             for word in cube.find_words():
-                if len(word) >= 3 and word not in result:
+                if len(word) >= self.min_word_length and word not in result:
                     result.append(word)
         return result
     
