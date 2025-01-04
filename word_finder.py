@@ -3,7 +3,7 @@ import csv
 import sys
 
 class Board:
-    def __init__(self, dim=4, language="English"):
+    def __init__(self, dim=4, language="English", id=None):
         '''
         A Boggle board.
 
@@ -49,6 +49,9 @@ class Board:
         if dim > 4:
             self.min_word_length = 4
 
+        self.last_id = None
+        self.id = id
+
     def __str__(self):
         print_string = ""
         for row in self.cube_configuration:
@@ -62,6 +65,11 @@ class Board:
         Add description here.
         '''
         # shuffle cubes in board
+        if self.id is None:
+            self.id = random.random()
+        seed = self.id
+        random.seed(seed)
+        self.id = seed
         self.cube_configuration = [[] for _ in range(self.dim)]
         map(lambda x: x.roll(), self.cubes_used)
         temp_list = list(self.cubes_used)
@@ -86,6 +94,8 @@ class Board:
         self.all_words = self.get_words()
         self.total_points = self.get_points()
         self.num_words = len(self.all_words)
+        self.last_id = self.id
+        self.id = random.random()
 
     def get_paths(self, min, max):
         '''
