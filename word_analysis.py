@@ -1,6 +1,6 @@
 import csv
 
-words_file = 'word_occurrences_old_cubes.csv'
+words_file = 'word_occurrences_test_cubes.csv'
 result = []
 with open(words_file, 'r') as csvfile:
         reader = csv.reader(csvfile)

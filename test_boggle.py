@@ -4,8 +4,7 @@ import random
 import pytest
 
 def get_test_board():
-    random.seed(58)
-    test_board = Board()
+    test_board = Board(id=58)
     test_board.populate()
     return test_board
 
