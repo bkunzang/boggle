@@ -30,12 +30,12 @@ class Board:
         self.words_set = set()
         #self.two_prefixes_set = set()
         #self.three_prefixes_set = set()
-        self.prefixes_set_list = [set() for _ in range(dim*dim - 2)]
+        self.prefixes_set_list = [set() for _ in range(dim*dim)]
         with open(dictionary_file_name, 'r') as file:
             reader = csv.reader(file)
             for row in reader:
                 self.words_set.add(row[0].lower())
-                for i in range(dim*dim - 2):
+                for i in range(dim*dim):
                     if len(row[0]) >= i+2:
                         self.prefixes_set_list[i].add((row[0].lower())[:(i+2)])
                 #self.two_prefixes_set.add((row[0].lower())[:2])
@@ -160,6 +160,9 @@ class Cube:
 
     def __repr__(self):
         return self.displayed_letter
+    
+    def __str__(self):
+        return self.displayed_letter
 
     def roll(self):
         '''
@@ -243,9 +246,116 @@ class Cube:
 
 def list_to_str(input_list):
     '''
-    Converts a list of Cubes a string of the displayed letters.
+    Converts a list of objects into a string of the displayed letters.
     '''
     result = ""
-    for cube in input_list:
-        result += cube.displayed_letter
+    for item in input_list:
+        result += item.__str__()
     return result
+
+class Letter:
+    def __init__(self, letter, board = None, neighbors = None):
+        self.letter = letter
+        self.board = board
+        self.neighbors = neighbors
+
+    def __str__(self):
+        return self.letter
+    
+    def __repr__(self):
+        return self.letter
+
+    def add_neighbor(self, new):
+        '''
+        Adds new (a Letter instance) to the list self.neighbors and also adds self to new.neighbors. Instantiates neighbor lists if necessary.
+        '''
+        if self.neighbors is None:
+            self.neighbors = []
+        if new.neighbors is None:
+            new.neighbors = []
+        if new not in self.neighbors and self not in new.neighbors:
+            self.neighbors.append(new)
+            new.neighbors.append(self)
+    
+    def clear_neighbors(self):
+        self.neighbors = None
+
+    def find_words(self):
+        '''
+        Finds all valid words beginning with self.
+        '''
+        return self.words_helper([self])
+
+    def words_helper(self, current_path):
+        '''
+        - Variant of DFS, where the Cubes are like graph vertices. 
+        - Checks at each step if there are any valid words beginning with the current path (reduces 4x4 solve time from about 17 secs to about 0.0015 secs)
+        '''
+        current_str = list_to_str(current_path).lower()
+        result = []
+        if current_str in self.board.words_set:
+            result.append(current_str)
+        if self.neighbors is None:
+            return result
+        if len(current_str) >= 2 and current_str not in self.board.prefixes_set_list[len(current_str)-2]:
+            pass
+        else:
+            for neighbor in self.neighbors:
+                if neighbor not in current_path:
+                    current_path.append(neighbor)
+                    newpaths = neighbor.words_helper(current_path)
+                    result.extend(newpaths)
+        current_path.pop()
+        return result
+    
+class Shake:
+    def __init__(self, letter_configuration, dim, board=None):
+        self.letter_configuration = letter_configuration
+        self.dim = dim
+        if board is None:
+            self.board = Board(dim=dim)
+        else:
+            self.board = board
+        self.letters_used = None
+    
+    def solve(self):
+        self.letters_used = []
+        for row in self.letter_configuration:
+            for i in range(len(row)):
+                row[i] = Letter(row[i], board=self.board)
+        for row in range(self.dim):
+            for col in range(self.dim):
+                self.letters_used.append(self.letter_configuration[row][col])
+                for i in range(-1, 2):
+                    for j in range(-1, 2):
+                        row_i = row + i
+                        col_j = col + j
+                        if row_i >= 0 and row_i < self.dim and col_j >= 0 and col_j < self.dim:
+                            if i != 0 or j != 0:
+                                self.letter_configuration[row][col].add_neighbor(self.letter_configuration[row_i][col_j])
+        self.all_words = self.get_words()
+        self.total_points = self.get_points()
+
+    def get_words(self):
+        '''
+        Returns a list of all of the valid words (at least 3 letters long and in the dictionary) in the board.
+        '''
+        result = []
+        for letter in self.letters_used:
+            for word in letter.find_words():
+                if len(word) >= self.board.min_word_length and word not in result:
+                    result.append(word)
+        return result
+    
+    def get_points(self):
+        acc = 0
+        for word in self.all_words:
+            if len(word) == 3: acc += 1
+            elif len(word) == 4: acc += 1
+            elif len(word) == 5: acc += 2
+            elif len(word) == 6: acc += 3
+            elif len(word) == 7: acc += 5
+            elif len(word) >= 8: acc += 11
+        return acc
+    
+    
