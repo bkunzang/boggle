@@ -1,6 +1,7 @@
 import random
 import csv
 import sys
+import io
 
 class Board:
     def __init__(self, dim=4, language="English", id=None):
@@ -317,6 +318,14 @@ class Shake:
         else:
             self.board = board
         self.letters_used = None
+
+    def __str__(self):
+        print_string = ""
+        for row in self.letter_configuration:
+            for elem in row:
+                print_string += (elem.letter).capitalize() + "  "
+            print_string += "\n"
+        return print_string
     
     def solve(self):
         self.letters_used = []
@@ -357,5 +366,17 @@ class Shake:
             elif len(word) == 7: acc += 5
             elif len(word) >= 8: acc += 11
         return acc
+    
+    def input(self):
+        letters = input()
+        separated = letters.split()
+        config = [[] for i in range(self.dim)]
+        for letter in separated:
+            for elem in config:
+                if len(elem) < self.dim:
+                    elem.append(letter)
+                    break
+        self.letter_configuration = config
+        self.solve()
     
     

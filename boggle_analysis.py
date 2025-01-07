@@ -18,7 +18,7 @@ def simulate():
     words_dict = {}
     with open(result_file, 'w') as csvfile:
         writer = csv.writer(csvfile)   
-        for i in range(10000):
+        for i in range(1000):
             board.populate()
             result.append(board.total_points)
             writer.writerow([i,board.last_id, board.total_points])
