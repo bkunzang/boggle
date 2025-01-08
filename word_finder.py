@@ -57,7 +57,7 @@ class Board:
         print_string = ""
         for row in self.cube_configuration:
             for elem in row:
-                print_string += elem.displayed_letter + " "
+                print_string += elem.displayed_letter.capitalize() + "  "
             print_string += "\n"
         return print_string
 
@@ -93,7 +93,6 @@ class Board:
                             if i != 0 or j != 0:
                                 self.cube_configuration[row][col].add_neighbor(self.cube_configuration[row_i][col_j])
         self.all_words = self.get_words()
-        self.total_points = self.get_points()
         self.num_words = len(self.all_words)
         self.last_id = self.id
         self.id = random.random()
@@ -126,10 +125,24 @@ class Board:
         Returns a list of all of the valid words (at least 3 letters long and in the dictionary) in the board.
         '''
         result = []
+        acc = 0
+        long_acc = 0
         for cube in self.cubes_used:
             for word in cube.find_words():
                 if len(word) >= self.min_word_length and word not in result:
                     result.append(word)
+                    if len(word) == 3: acc += 1
+                    elif len(word) == 4: acc += 1
+                    elif len(word) == 5: acc += 2
+                    elif len(word) == 6: acc += 3
+                    elif len(word) == 7: 
+                        acc += 5
+                        long_acc += 1
+                    elif len(word) >= 8: 
+                        acc += 11
+                        long_acc += 1
+        self.total_points = acc
+        self.long_words = long_acc
         return result
     
     def get_points(self):
@@ -142,6 +155,9 @@ class Board:
             elif len(word) == 7: acc += 5
             elif len(word) >= 8: acc += 11
         return acc
+    
+    def change_cubes(self, new_cubes):
+        self.cubes_used = new_cubes
 
 class Cube:
     '''
@@ -160,7 +176,7 @@ class Cube:
         self.neighbors = neighbors
 
     def __repr__(self):
-        return self.displayed_letter
+        return 'Cube('+repr(self.letter_list)+')'
     
     def __str__(self):
         return self.displayed_letter
