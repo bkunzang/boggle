@@ -6,7 +6,7 @@ from word_finder import *
 from time import process_time
 import csv
 
-result_file = 'boggle_trials_test_cubes.csv'
+result_file = 'boggle_trials_anti_suffix_cubes.csv'
 plt.rcParams['figure.dpi'] = 150
 plt.rcParams['savefig.dpi'] = 150
 
@@ -18,7 +18,7 @@ def simulate():
     words_dict = {}
     with open(result_file, 'w') as csvfile:
         writer = csv.writer(csvfile)   
-        for i in range(1000):
+        for i in range(300000):
             board.populate()
             result.append(board.total_points)
             writer.writerow([i,board.last_id, board.total_points])
@@ -52,16 +52,18 @@ result = simulate()
 t2 = process_time()
 sim = result[0]
 words_dict = result[1]
-with open('word_occurrences_test_cubes.csv', 'w') as csvfile:
+
+with open('word_occurrences_anti_suffix_cubes.csv', 'w') as csvfile:
     writer = csv.writer(csvfile)
     for word in words_dict:
         res = words_dict.get(word)
         writer.writerow([word, res[0], res[1], res[2]])
+
 x=stats.describe(sim)
 y=sns.histplot(sim)
 med=np.median(sim)
-z = stats.t.interval(0.99, 299999, loc = np.mean(sim), scale = np.std(sim) / np.sqrt(10000))
-plt.title('Distribution of Points in Big Boggle (Old Cubes)')
+z = stats.t.interval(0.99, 299999, loc = np.mean(sim), scale = np.std(sim) / np.sqrt(300000))
+plt.title('Distribution of Points in Big Boggle (No-Suffix Cubes)')
 plt.ylabel('Frequency')
 plt.xlabel('Points')
 plt.show()

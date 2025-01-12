@@ -1,8 +1,9 @@
 from word_finder import *
 import numpy as np
 import string
+import multiprocessing
 alphabet = list(string.ascii_letters[:26])
-board = Board(dim=5)
+board = Board(dim=5, filtered=True)
 
 def str_to_cube(letters_str):
     assert len(letters_str) == 6
@@ -18,7 +19,8 @@ def cube_to_str(cube):
         result += letter
     return result
 
-def cubes_fitness(iters):
+def cubes_test(cubes, iters):
+    board.change_cubes(cubes.cube_list)
     acc = 0
     for i in range(iters):
         board.populate()
@@ -46,6 +48,7 @@ class CubeSet:
         self.cube_string = cube_string
         self.cube_list = str_to_cubes(cube_string)
         self.dim = dim
+        self.score = None
 
     def __str__(self):
         return self.cube_string
@@ -58,15 +61,37 @@ class CubeSet:
 
     def fitness(self, iters):
         if not self.is_legal():
+            self.score = 0
             return 0
-        acc = 0
         board.change_cubes(self.cube_list)
+        #words_set = set()
+        #s_count = self.cube_string.count('s')
+        #e_count = self.cube_string.count('e')
+        acc = 0
         for _ in range(iters):
             board.populate()
-            acc += board.total_points
+            if board.num_words == 0:
+                pass
+            else:
+                acc += board.long_words / board.num_words
+            #acc += board.long_words / board.num_words - (2 ** (s_count - 9)) / 2500
+        #size = len(words_set)
         mean = acc / iters
-        self.fitness = mean
-        return mean
+        adjusted = mean #- (2 ** (s_count - 9)) - (2 ** (e_count - 21))
+        if adjusted < 0:
+            adjusted = 0
+        self.score = adjusted
+        return adjusted
+    
+    def cubeset_to_csv(self):
+        result_file = 'new_cubes.csv'
+        for i in self.cube_list:
+            i.letter_list = sorted(i.letter_list)
+        with open(result_file, 'w') as csvfile:
+            writer = csv.writer(csvfile)
+            sorted_cube_list = sorted(self.cube_list, key=lambda x: ''.join(x.letter_list))
+            for cube in sorted_cube_list:
+                writer.writerow(list(map(lambda x: x.capitalize(), cube.letter_list)))
 
 '''
 def random_cubes():
@@ -80,7 +105,7 @@ def random_cubes():
         result = ''
 '''
 class Genetic:
-    def __init__(self, fitness=CubeSet.fitness, alphabet=alphabet, genome_length=150, population_size=500, mutation_rate=0.1, crossover_rate=0.7, population=None, generations = 1000):
+    def __init__(self, fitness=CubeSet.fitness, alphabet=alphabet, genome_length=150, population_size=500, mutation_rate=0.08, crossover_rate=0.7, population=None, generations = 700):
         self.fitness = fitness
         self.alphabet = alphabet
         self.genome_length = genome_length
@@ -133,7 +158,7 @@ class Genetic:
     def run_generation(self):
         result = []
         for indiv in self.population:
-            result.append(self.fitness(indiv, 5))
+            result.append(self.fitness(indiv, 6))
         return result
     
     def genetic_algorithm(self):
@@ -169,7 +194,26 @@ class Genetic:
             self.population = new_pop
             self.average = total / self.population_size
             self.averages.append(self.average)
-                    
+        result_file = 'cube_sets.csv'
+        with open(result_file, 'w') as csvfile:
+            writer = csv.writer(csvfile)
+            for i in self.population:
+                i.score = self.fitness(i, 100)
+                writer.writerow([i.cube_string, i.score])
+
+
+'''
+result_file = 'cube_sets.csv'
+with open(result_file, 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        writer = csv.writer(csvfile)
+        result = []
+        for row in reader:
+            cubeset = CubeSet(row[0])
+            cubeset.fitness(100)
+            result.append(cubeset)
+'''
+
 
 
 

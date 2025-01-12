@@ -4,7 +4,7 @@ import sys
 import io
 
 class Board:
-    def __init__(self, dim=4, language="English", id=None):
+    def __init__(self, dim=4, language="English", id=None, filtered=False):
         '''
         A Boggle board.
 
@@ -16,7 +16,6 @@ class Board:
         - language: language of play, defaults to English
         '''
         self.cubes_used = []
-
         csv_file_name = language + "_" + str(dim) + "_standard_board.csv"
         with open(csv_file_name, 'r') as file:
             csv_reader = csv.reader(file)
@@ -26,7 +25,11 @@ class Board:
                     letter_list.append(letter)
                 self.cubes_used.append(Cube(letter_list, self))
 
-        dictionary_file_name = language + "_dictionary.csv"
+        if filtered == False:
+            dictionary_file_name = language + "_dictionary.csv"
+        else:
+            dictionary_file_name = "Filtered_" + language + "_dictionary.csv"
+
         csv.field_size_limit(sys.maxsize)
         self.words_set = set()
         #self.two_prefixes_set = set()
